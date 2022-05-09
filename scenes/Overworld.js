@@ -49,12 +49,44 @@ class Overworld extends Phaser.Scene {
         this.player.body.allowGravity = false;
         this.player.body.setCollideWorldBounds(true);
         this.player.body.onWorldBounds = true;
+        this.cameras.main.flash(250);
+        this.cameras.main.shake(250);
 
         this.physics.world.on('worldbounds', (body, blockedUp, blockedDown, blockedLeft, blockedRight) => {
             if (blockedUp) {
                 this.cameras.main.pan(
                     this.ROOMWIDTH*1.5,
                     this.ROOMHEIGHT*0.5,
+                    3000,
+                    'Linear'
+                );
+                this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+            }
+            if (blockedDown) {
+                this.cameras.main.pan(
+                    this.ROOMWIDTH*1.5,
+                    this.ROOMHEIGHT*2.5,
+                    3000,
+                    'Linear'
+                );
+                this.physics.world.setBounds(this.ROOMWIDTH, 100, this.ROOMWIDTH, this.ROOMHEIGHT,100);
+                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+            }
+            if (blockedLeft) {
+                this.cameras.main.pan(
+                    this.ROOMWIDTH*0.5,
+                    this.ROOMHEIGHT*3,
+                    3000,
+                    'Linear'
+                );
+                this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+            }
+            if (blockedRight) {
+                this.cameras.main.pan(
+                    this.ROOMWIDTH*2.5,
+                    this.ROOMHEIGHT*2.5,
                     3000,
                     'Linear'
                 );
