@@ -11,6 +11,7 @@ class Overworld extends Phaser.Scene {
         this.VELOCITY = 150;
         this.ROOMWIDTH = 512;
         this.ROOMHEIGHT = 336;
+        this.ROOMBOUNDS = {x:1, y:1};
 
         // Set background color
         this.cameras.main.setBackgroundColor('#666');
@@ -41,9 +42,6 @@ class Overworld extends Phaser.Scene {
         // Set up animations
         this.createAnimations();
 
-        // set world boundaries
-        this.physics.world.setBounds(this.ROOMWIDTH, this.ROOMHEIGHT, this.ROOMWIDTH, this.ROOMHEIGHT);
-
         // make player avatar 🧍
         this.player = this.physics.add.sprite(this.ROOMWIDTH*1.5, this.ROOMHEIGHT*1.5, 'link_atlas', 'idle_down_0001').setScale(this.AVATAR_SCALE);
         this.player.body.allowGravity = false;
@@ -52,46 +50,68 @@ class Overworld extends Phaser.Scene {
         this.cameras.main.flash(250);
         this.cameras.main.shake(250);
 
+        // set world boundaries
+        this.physics.world.setBounds(this.ROOMWIDTH-this.player.displayWidth/2, this.ROOMHEIGHT-this.player.displayHeight/2, 
+              this.ROOMWIDTH+this.player.displayWidth , this.ROOMHEIGHT+this.player.displayHeight/2);
+         //this.physics.world.setBounds(this.ROOMWIDTH, this.ROOMHEIGHT, this.ROOMWIDTH, this.ROOMHEIGHT);
+
         this.physics.world.on('worldbounds', (body, blockedUp, blockedDown, blockedLeft, blockedRight) => {
             if (blockedUp) {
+                this.ROOMBOUNDS.y--;
+                console.log(this.ROOMBOUNDS.x + "," + this.ROOMBOUNDS.y);
                 this.cameras.main.pan(
-                    this.ROOMWIDTH*1.5,
-                    this.ROOMHEIGHT*0.5,
+                    //this.ROOMWIDTH*1.5,
+                    //this.ROOMHEIGHT*0.5,
+                    this.ROOMWIDTH * this.ROOMBOUNDS.x + (this.ROOMWIDTH * 0.5),
+                    this.ROOMHEIGHT * this.ROOMBOUNDS.y + (this.ROOMHEIGHT * 0.5), 
                     3000,
-                    'Linear'
+                    'Bounce'
                 );
-                this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
-                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+                this.physics.world.setBounds(this.ROOMWIDTH*this.ROOMBOUNDS.x, this.ROOMHEIGHT*this.ROOMBOUNDS.y, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x ,this.player.body.y - 45);
+                //this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
+                //this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
             }
             if (blockedDown) {
+                this.ROOMBOUNDS.y ++;
                 this.cameras.main.pan(
-                    this.ROOMWIDTH*1.5,
-                    this.ROOMHEIGHT*2.5,
+                    this.ROOMWIDTH * this.ROOMBOUNDS.x + (this.ROOMWIDTH * 0.5),
+                    this.ROOMHEIGHT * this.ROOMBOUNDS.y + (this.ROOMHEIGHT * 0.5),
                     3000,
-                    'Linear'
+                    'Sine.easeOut'
                 );
-                this.physics.world.setBounds(this.ROOMWIDTH, 100, this.ROOMWIDTH, this.ROOMHEIGHT,100);
-                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+                this.physics.world.setBounds(this.ROOMWIDTH*this.ROOMBOUNDS.x, this.ROOMHEIGHT*this.ROOMBOUNDS.y, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x,this.player.body.y + 45);
             }
             if (blockedLeft) {
+                this.ROOMBOUNDS.x --;
                 this.cameras.main.pan(
-                    this.ROOMWIDTH*0.5,
-                    this.ROOMHEIGHT*3,
+                    //this.ROOMWIDTH*0.5,
+                    //this.ROOMHEIGHT*3,
+                    this.ROOMWIDTH * this.ROOMBOUNDS.x + (this.ROOMWIDTH * 0.5),
+                    this.ROOMHEIGHT * this.ROOMBOUNDS.y + (this.ROOMHEIGHT * 0.5),
                     3000,
-                    'Linear'
+                    'Cubic.easeIn'
                 );
-                this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
-                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+                this.physics.world.setBounds(this.ROOMWIDTH*this.ROOMBOUNDS.x, this.ROOMHEIGHT*this.ROOMBOUNDS.y, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x - 45 ,this.player.body.y);
+                //this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
+                //this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
             }
             if (blockedRight) {
+                this.ROOMBOUNDS.x ++;
                 this.cameras.main.pan(
-                    this.ROOMWIDTH*2.5,
-                    this.ROOMHEIGHT*2.5,
+                    //this.ROOMWIDTH*2.5,
+                    //this.ROOMHEIGHT*2.5,
+                    this.ROOMWIDTH * this.ROOMBOUNDS.x + (this.ROOMWIDTH * 0.5),
+                    this.ROOMHEIGHT * this.ROOMBOUNDS.y + (this.ROOMHEIGHT * 0.5),
                     3000,
-                    'Linear'
+                    'Cubic.easeOut'
                 );
-                this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
-                this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
+                this.physics.world.setBounds(this.ROOMWIDTH*this.ROOMBOUNDS.x, this.ROOMHEIGHT*this.ROOMBOUNDS.y, this.ROOMWIDTH, this.ROOMHEIGHT);
+                this.player.body.reset(this.player.body.x + 45,this.player.body.y);
+                //this.physics.world.setBounds(this.ROOMWIDTH, 0, this.ROOMWIDTH, this.ROOMHEIGHT);
+                //this.player.body.reset(this.player.body.x+this.player.body.halfWidth, this.player.body.y - 1);
             }
         });
 
